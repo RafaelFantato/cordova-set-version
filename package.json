@@ -1,0 +1,26 @@
+{
+  "name": "cordova-set-version",
+  "version": "1.0.0",
+  "description": "Sobrescreve os ícones do Android com base em arquivos ZIP (dev ou tst) durante o build",
+  "keywords": [
+    "cordova",
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "dependencies": {
+    "extract-zip": "^2.0.1",
+    "plist": "^3.0.2",
+    "q": "^1.5.1",
+    "semver": "^6.3.0",
+    "xml2js": "^0.4.16"
+  },
+  "author": "Rafael Fantato",
+  "license": "MIT",
+  "homepage": "https://lcs.valantic.com",
+  "cordova": {
+    "id": "cordova-set-version",
+    "platforms": [
+      "android"
+    ]
+  }
+}

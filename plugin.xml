@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        id="cordova-set-version"
+        version="1.0.0">
+    <name>Cordova Replace Icons</name>
+    <description>Sobrescreve os ícones do Android com base em arquivos ZIP (dev ou tst) durante o build.</description>
+    <license>MIT</license>
+    <keywords>cordova, icons, replace, android</keywords>
+    <author>Rafael Fantato</author>
+
+    <preference name="ICON_ENV"/>
+    
+    <!-- Plataformas suportadas -->
+    <platform name="android">
+        <!-- Hook para substituir ícones antes do build -->
+        <hook type="before_build" src="src/replace-icons.js" />
+        <config-file target="config.xml" parent="/*">
+            <preference name="ICON_ENV" value="$ICON_ENV"/>
+        </config-file>
+    </platform>
+</plugin>
