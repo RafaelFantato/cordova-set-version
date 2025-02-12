@@ -10,6 +10,23 @@ const builder = new xml2js.Builder({
     }
 });
 
+async function getNewVersionFromConfig(configXmlPath) {
+    try {
+        const xmlContent = fs.readFileSync(configXmlPath, "utf-8");
+        const parser = new xml2js.Parser();
+        const result = await parser.parseStringPromise(xmlContent);
+        
+        if (result.widget.preference) {
+            const preference = result.widget.preference.find(p => p.$.name === "NEW_VERSION");
+            return preference ? preference.$.value : "";
+        }
+        return "";
+    } catch (err) {
+        console.error("[New Version] Erro ao ler NEW_VERSION do config.xml:", err);
+        return "";
+    }
+}
+
 async function replaceIcons(context) {
     const projectRoot = context.opts.projectRoot;
 
@@ -22,14 +39,12 @@ async function replaceIcons(context) {
 
     console.log(`[New Version] projectRoot: ${projectRoot}`);
 
-    // Verifica se o config.xml existe
     if (!fs.existsSync(configXmlPath)) {
         console.error(`[New Version] Arquivo config.xml não encontrado em: ${configXmlPath}`);
         return;
     }
 
-    // Obtém a versão do NEW_VERSION (preferência do Cordova)
-    const newVersion = getConfigParser(context, configXmlPath).getPreference("NEW_VERSION") || "";
+    const newVersion = await getNewVersionFromConfig(configXmlPath);
 
     if (!newVersion) {
         console.log("[New Version] Variável NEW_VERSION não definida ou inválida. Nenhuma ação será realizada.");
@@ -42,7 +57,6 @@ async function replaceIcons(context) {
 
         const result = await parser.parseStringPromise(xmlContent);
 
-        // Remove a preferência 'NEW_VERSION' caso exista
         if (result.widget.preference) {
             const indexNEW_VERSION = result.widget.preference.findIndex(p => p.$.name === "NEW_VERSION");
             if (indexNEW_VERSION !== -1) {
@@ -53,17 +67,14 @@ async function replaceIcons(context) {
             }
         }
 
-        // Atualiza a versão do app
         result.widget.$.version = newVersion;
 
-        // Atualiza o versionCode para Android (se existir)
         if (result.widget.$["android-versionCode"]) {
             const newVersionCode = parseInt(result.widget.$["android-versionCode"]) + 1;
             result.widget.$["android-versionCode"] = newVersionCode.toString();
             console.log(`[New Version] android-versionCode atualizado para ${newVersionCode}`);
         }
 
-        // Salva as alterações no config.xml
         const newXmlContent = builder.buildObject(result);
         fs.writeFileSync(configXmlPath, newXmlContent, "utf-8");
 
@@ -71,18 +82,6 @@ async function replaceIcons(context) {
     } catch (err) {
         console.error("[New Version] Erro ao modificar o config.xml:", err);
     }
-}
-
-function getConfigParser(context, configPath) {
-    let ConfigParser;
-
-    if (semver.lt(context.opts.cordova.version, "5.4.0")) {
-        ConfigParser = context.requireCordovaModule("cordova-lib/src/ConfigParser/ConfigParser");
-    } else {
-        ConfigParser = require("cordova-common").ConfigParser;
-    }
-
-    return new ConfigParser(configPath);
 }
 
 module.exports = replaceIcons;
