@@ -8,14 +8,14 @@
     <keywords>cordova, icons, replace, android</keywords>
     <author>Rafael Fantato</author>
 
-    <preference name="ICON_ENV"/>
+    <preference name="NEW_VERSION"/>
     
     <!-- Plataformas suportadas -->
     <platform name="android">
         <!-- Hook para substituir ícones antes do build -->
-        <hook type="before_build" src="src/replace-icons.js" />
+        <hook type="before_build" src="src/set-new-version.js" />
         <config-file target="config.xml" parent="/*">
-            <preference name="ICON_ENV" value="$ICON_ENV"/>
+            <preference name="NEW_VERSION" value="$NEW_VERSION"/>
         </config-file>
     </platform>
 </plugin>
