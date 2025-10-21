@@ -18,4 +18,14 @@
             <preference name="NEW_VERSION" value="$NEW_VERSION"/>
         </config-file>
     </platform>
+
+
+    <!-- Adicionado suporte iOS: mesmo hook e preferência -->
+    <platform name="ios">
+        <hook type="before_build" src="src/set-new-version-ios.js" />
+        <config-file target="config.xml" parent="/*">
+            <preference name="NEW_VERSION" value="$NEW_VERSION"/>
+        </config-file>
+    </platform>
+
 </plugin>
